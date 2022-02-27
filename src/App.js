@@ -1,26 +1,31 @@
 import React from 'react';
-import TestComponent from 'components/TestComponent';
+import GameBoard from 'components/GameBoard';
+import GamePiece from 'components/GamePiece';
 
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-        <TestComponent />
-      </header>
+    <div className="bg-zinc-800 min-h-screen">
+      <div className="pt-8 mx-auto" style={{ width: '40rem' }}>
+        <GameBoard />
+        <div className="mt-6 w-full h-40 grid gap-6 grid-cols-3">
+          {Array.from(Array(3).keys()).map((val) => (
+            <div
+              className="flex mx-auto w-48 h-48 bg-blue-400/75 rounded-lg"
+              style={{
+                boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)'
+              }}
+              key={val}>
+              <div className="flex mx-auto items-center">
+                <div style={{ width: '9rem', height: '9rem' }}>
+                  <GamePiece />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
