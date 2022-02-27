@@ -10,7 +10,7 @@ function App() {
       <div className="pt-8 mx-auto" style={{ width: '40rem' }}>
         <GameBoard />
         <div className="mt-6 w-full h-40 grid gap-6 grid-cols-3">
-          {Array.from(Array(3).keys()).map((val) => (
+          {Array.from(Array(3).keys()).map((val, i) => (
             <div
               className="flex mx-auto w-48 h-48 bg-blue-400/75 rounded-lg"
               style={{
@@ -18,9 +18,7 @@ function App() {
               }}
               key={val}>
               <div className="flex mx-auto items-center">
-                <div style={{ width: '9rem', height: '9rem' }}>
-                  <GamePiece />
-                </div>
+                <GamePiece xOffset={220 * i} />
               </div>
             </div>
           ))}
