@@ -98,5 +98,189 @@ export const gameArray = [
   { y: 0, x: 384, isFilled: false },
   { y: 0, x: 448, isFilled: false },
   { y: 0, x: 512, isFilled: false },
-  { y: 0, x: 576, isFilled: false },
+  { y: 0, x: 576, isFilled: false }
+];
+
+export const gamePieces = [
+  {
+    name: 'rowSmall',
+    cols: 2,
+    rows: 1,
+    structure: [
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'row',
+    cols: 3,
+    rows: 1,
+    structure: [
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 },
+      { isFilled: true, row: 0, col: 2 }
+    ]
+  },
+  {
+    name: 'column',
+    cols: 1,
+    rows: 3,
+    structure: [
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 0, col: 0 }
+    ]
+  },
+  {
+    name: 'columnLarge',
+    cols: 1,
+    rows: 4,
+    structure: [
+      { isFilled: true, row: 3, col: 0 },
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 0, col: 0 }
+    ]
+  },
+  {
+    name: 'lSmall',
+    cols: 2,
+    rows: 2,
+    structure: [
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: false, row: 1, col: 1 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'lSmallInverse',
+    cols: 2,
+    rows: 2,
+    structure: [
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 1, col: 1 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: false, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'lSmallReverse',
+    cols: 2,
+    rows: 2,
+    structure: [
+      { isFilled: false, row: 1, col: 0 },
+      { isFilled: true, row: 1, col: 1 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'lSmallInverseReverse',
+    cols: 2,
+    rows: 2,
+    structure: [
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 1, col: 1 },
+      { isFilled: false, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'lLarge',
+    cols: 3,
+    rows: 3,
+    structure: [
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: false, row: 2, col: 1 },
+      { isFilled: false, row: 2, col: 2 },
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: false, row: 1, col: 1 },
+      { isFilled: false, row: 1, col: 2 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 },
+      { isFilled: true, row: 0, col: 2 }
+    ]
+  },
+  {
+    name: 'lLargeInverse',
+    cols: 3,
+    rows: 3,
+    structure: [
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: true, row: 2, col: 1 },
+      { isFilled: true, row: 2, col: 2 },
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: false, row: 1, col: 1 },
+      { isFilled: false, row: 1, col: 2 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: false, row: 0, col: 1 },
+      { isFilled: false, row: 0, col: 2 }
+    ]
+  },
+  {
+    name: 'lReverseLarge',
+    cols: 3,
+    rows: 3,
+    structure: [
+      { isFilled: false, row: 2, col: 0 },
+      { isFilled: false, row: 2, col: 1 },
+      { isFilled: true, row: 2, col: 2 },
+      { isFilled: false, row: 1, col: 0 },
+      { isFilled: false, row: 1, col: 1 },
+      { isFilled: true, row: 1, col: 2 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 },
+      { isFilled: true, row: 0, col: 2 }
+    ]
+  },
+  {
+    name: 'lLargeInverseReverse',
+    cols: 3,
+    rows: 3,
+    structure: [
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: true, row: 2, col: 1 },
+      { isFilled: true, row: 2, col: 2 },
+      { isFilled: false, row: 1, col: 0 },
+      { isFilled: false, row: 1, col: 1 },
+      { isFilled: true, row: 1, col: 2 },
+      { isFilled: false, row: 0, col: 0 },
+      { isFilled: false, row: 0, col: 1 },
+      { isFilled: true, row: 0, col: 2 }
+    ]
+  },
+  {
+    name: 'square',
+    cols: 1,
+    rows: 1,
+    structure: [{ isFilled: true, row: 0, col: 0 }]
+  },
+  {
+    name: 'cube',
+    cols: 2,
+    rows: 2,
+    structure: [
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 1, col: 1 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 }
+    ]
+  },
+  {
+    name: 'cubeLarge',
+    cols: 3,
+    rows: 3,
+    structure: [
+      { isFilled: true, row: 2, col: 0 },
+      { isFilled: true, row: 2, col: 1 },
+      { isFilled: true, row: 2, col: 2 },
+      { isFilled: true, row: 1, col: 0 },
+      { isFilled: true, row: 1, col: 1 },
+      { isFilled: true, row: 1, col: 2 },
+      { isFilled: true, row: 0, col: 0 },
+      { isFilled: true, row: 0, col: 1 },
+      { isFilled: true, row: 0, col: 2 }
+    ]
+  }
 ];

@@ -8,9 +8,7 @@ const GameBoard = () => {
 
   useEffect(() => {
     console.log(activeGamePiece);
-    const rootSquare = gameBoard.findIndex((square) => {
-      console.log(square.y < activeGamePiece.y < square.y + 64);
-
+    const anchorSquare = gameBoard.findIndex((square) => {
       return (
         square.x - 20 < activeGamePiece.x &&
         activeGamePiece.x + 20 < square.x + 64 &&
@@ -18,14 +16,30 @@ const GameBoard = () => {
         activeGamePiece.y + 20 < square.y + 64
       );
     });
-    console.log(rootSquare);
-    if (rootSquare !== -1) {
-      setGameBoard((currBoard) => {
-        const updatedArray = [...currBoard];
-
-        updatedArray[rootSquare].isFilled = true;
-        return [...updatedArray];
+    if (anchorSquare !== -1) {
+      const updatedArray = [...gameBoard];
+      let isValid = true;
+      activeGamePiece.gamePiece.structure.forEach((piece) => {
+        if (piece.isFilled) {
+          if (piece.col > 0 && (piece.col + anchorSquare) % 10 === 0) {
+            isValid = false;
+          }
+          const index = anchorSquare - 10 * piece.row + piece.col;
+          if (index < 0) {
+            isValid = false;
+          } else if (updatedArray[index].isFilled) {
+            isValid = false;
+          }
+        }
       });
+      if (isValid) {
+        activeGamePiece.gamePiece.structure.forEach((piece) => {
+          if (piece.isFilled) {
+            updatedArray[anchorSquare - 10 * piece.row + piece.col].isFilled = true;
+          }
+        });
+        setGameBoard(updatedArray);
+      }
     }
   }, [activeGamePiece]);
 
