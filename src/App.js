@@ -27,7 +27,7 @@ function App() {
               }}
               key={i}>
               <div className="flex mx-auto items-center">
-                <GamePiece pieceData={piece} xOffset={220 * i} />
+                {!piece.isValid && <GamePiece pieceData={piece} xOffset={220 * i} />}
               </div>
             </div>
           ))}

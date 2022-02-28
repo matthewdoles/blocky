@@ -26,14 +26,33 @@ export function getRandomPieces() {
     while (i < 3) {
       randomPieces.push({
         ...gamePieces[Math.floor(Math.random() * gamePieces.length)],
-        isValid: false
+        isValid: false,
+        id: i
       });
       i++;
     }
-    console.log(randomPieces);
     dispatch({
       type: SET_PIECES,
       gamePieces: randomPieces
     });
+  };
+}
+
+export function updateGamePieceValid(id, isValid) {
+  return async (dispatch, getState) => {
+    const { selectableGamePieces } = getState();
+    const updatedPieces = [...selectableGamePieces.gamePieces];
+    const gamePieceIndex = updatedPieces.findIndex((piece) => piece.id === id);
+    if (gamePieceIndex !== -1) {
+      updatedPieces[gamePieceIndex].isValid = isValid;
+    }
+    dispatch({
+      type: SET_PIECES,
+      gamePieces: updatedPieces
+    });
+
+    if (updatedPieces.every((piece) => piece.isValid)) {
+      dispatch(getRandomPieces());
+    }
   };
 }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { gameArray } from 'const';
+import { updateGamePieceValid } from 'store/reducers/selectableGamePieces';
 
 const GameBoard = () => {
   const [gameBoard, setGameBoard] = useState(gameArray);
   const activeGamePiece = useSelector((state) => state.activeGamePiece);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log(activeGamePiece);
@@ -39,6 +41,7 @@ const GameBoard = () => {
           }
         });
         setGameBoard(updatedArray);
+        dispatch(updateGamePieceValid(activeGamePiece.gamePiece.id, isValid));
       }
     }
   }, [activeGamePiece]);

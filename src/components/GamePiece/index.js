@@ -17,7 +17,7 @@ const GamePiece = ({ pieceData, xOffset }) => {
     const { x, y } = position;
     let calcX = x + xOffset + (gamePiece.cols === 1 ? 64 : gamePiece.cols === 2 ? 32 : 0);
     let calcY = Math.abs(y + (gamePiece.rows === 1 ? 150 : gamePiece.rows === 2 ? 180 : 217));
-    console.log(y, calcY, gamePiece.rows);
+    setIsBeingDragged(false);
     dispatch(
       updateActivePiece({
         x: calcX,
@@ -28,7 +28,7 @@ const GamePiece = ({ pieceData, xOffset }) => {
   };
 
   return (
-    <Draggable onStart={handleStart} onStop={handleStop}>
+    <Draggable onStart={handleStart} onStop={handleStop} position={{ x: 0, y: 0 }}>
       <div
         className={
           gamePiece.cols === 4
