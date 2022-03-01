@@ -1,4 +1,4 @@
-export const gameArray = [
+export const gameBoard = [
   { y: 576, x: 0, isFilled: false },
   { y: 576, x: 64, isFilled: false },
   { y: 576, x: 128, isFilled: false },

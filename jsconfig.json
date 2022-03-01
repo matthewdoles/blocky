@@ -3,6 +3,7 @@
     "baseUrl": "./src",
     "paths": {
       "components": ["components"],
+      "const": ["const"],
       "store": ["store"]
     }
   }

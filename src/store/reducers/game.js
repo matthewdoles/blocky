@@ -1,10 +1,13 @@
+import { gameBoard } from 'const';
+
 export const UPDATE_SCORE = 'UPDATE_SCORE';
 export const GAME_OVER = 'GAME_OVER';
 
 const INITIAL_STATE = {
   score: 0,
   addedPoints: 0,
-  isOver: false
+  isOver: false,
+  gameBoard: gameBoard
 };
 
 export default function gameReducer(state = INITIAL_STATE, action) {
@@ -12,6 +15,7 @@ export default function gameReducer(state = INITIAL_STATE, action) {
     case UPDATE_SCORE: {
       return {
         ...state,
+        gameBoard: action.gameBoard,
         addedPoints: action.score,
         score: state.score + action.score
       };
@@ -27,10 +31,11 @@ export default function gameReducer(state = INITIAL_STATE, action) {
   }
 }
 
-export function updateScore(score) {
+export function updateGame(gameBoard, score) {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_SCORE,
+      gameBoard,
       score
     });
   };

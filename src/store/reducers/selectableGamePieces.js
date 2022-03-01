@@ -1,4 +1,6 @@
 import { gamePieces } from 'const';
+import { checkGameOver } from 'functions';
+import { updateGameOver } from './game';
 
 export const SET_PIECES = 'SET_PIECES';
 
@@ -20,7 +22,8 @@ export default function selectableGamePieces(state = INITIAL_STATE, action) {
 }
 
 export function getRandomPieces() {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { game } = getState();
     let i = 0;
     let randomPieces = [];
     while (i < 3) {
@@ -35,6 +38,9 @@ export function getRandomPieces() {
       type: SET_PIECES,
       gamePieces: randomPieces
     });
+    if (!checkGameOver(game.gameBoard, randomPieces)) {
+      dispatch(updateGameOver(true));
+    }
   };
 }
 

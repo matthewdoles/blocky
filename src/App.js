@@ -8,7 +8,7 @@ import './App.css';
 
 function App() {
   const { gamePieces } = useSelector((state) => state.selectableGamePieces);
-  const { score } = useSelector((state) => state.game);
+  const { score, isOver } = useSelector((state) => state.game);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,9 +19,14 @@ function App() {
     <div className="bg-zinc-800 min-h-screen">
       <div className="relative pt-8 mx-auto" style={{ width: '40rem' }}>
         <GameBoard />
-        <div className="absolute top-0 mt-6" style={{ right: '-125px' }}>
-          <div className="text-white text-center font-bold uppercase">Score</div>
-          <div className="stat-value text-white text-center">{score}</div>
+        <div className="absolute top-0 mt-6" style={{ right: '-175px' }}>
+          <div className="w-40">
+            <div className="text-white text-center font-bold uppercase">Score</div>
+            <div className="stat-value text-white text-center">{score}</div>
+            {isOver && (
+              <div className="text-red-500 font-bold text-center uppercase">Game Over</div>
+            )}
+          </div>
         </div>
         <div className="mt-6 w-full h-40 grid gap-6 grid-cols-3">
           {gamePieces.map((piece, i) => (
