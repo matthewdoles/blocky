@@ -28,7 +28,7 @@ const GamePiece = ({ pieceData, xOffset }) => {
   };
 
   return (
-    <Draggable onStart={handleStart} onStop={handleStop} position={{ x: 0, y: 0 }}>
+    <Draggable bounds="body" onStart={handleStart} onStop={handleStop} position={{ x: 0, y: 0 }}>
       <div
         className={
           gamePiece.cols === 4
