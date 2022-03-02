@@ -39,12 +39,12 @@ export const checkGameOver = (gameBoard, gamePieces) => {
       if (!piece.isValid) {
         gameBoard.forEach((square, i) => {
           let isValid = true;
-          piece.structure.forEach((piece) => {
-            if (piece.isFilled) {
-              if (piece.col > 0 && (piece.col + i) % 10 === 0) {
+          piece.structure.forEach((sq) => {
+            if (sq.isFilled) {
+              if (sq.col > 0 && (sq.col + i) % 10 === 0) {
                 isValid = false;
               }
-              const index = i - 10 * piece.row + piece.col;
+              const index = i - 10 * sq.row + sq.col;
               if (index > 99 || index < 0) {
                 isValid = false;
               } else if (gameBoard[index].isFilled) {

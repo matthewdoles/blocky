@@ -16,7 +16,17 @@ const GamePiece = ({ pieceData, xOffset }) => {
   const handleStop = (e, position) => {
     const { x, y } = position;
     let calcX = x + xOffset + (gamePiece.cols === 1 ? 64 : gamePiece.cols === 2 ? 32 : 0);
-    let calcY = Math.abs(y + (gamePiece.rows === 1 ? 150 : gamePiece.rows === 2 ? 180 : 217));
+    let belowYAxis =
+      gamePiece.rows === 1 && y > -130
+        ? true
+        : gamePiece.rows === 2 && y > -160
+        ? true
+        : gamePiece.rows === 3 && y > -197
+        ? true
+        : false;
+    let calcY = belowYAxis
+      ? -200
+      : Math.abs(y + (gamePiece.rows === 1 ? 150 : gamePiece.rows === 2 ? 180 : 217));
     setIsBeingDragged(false);
     dispatch(
       updateActivePiece({
@@ -31,9 +41,7 @@ const GamePiece = ({ pieceData, xOffset }) => {
     <Draggable onStart={handleStart} onStop={handleStop} position={{ x: 0, y: 0 }}>
       <div
         className={
-          gamePiece.cols === 4
-            ? 'grid grid-flow-row grid-cols-4'
-            : gamePiece.cols === 3
+          gamePiece.cols === 3
             ? 'grid grid-flow-row grid-cols-3'
             : gamePiece.cols === 2
             ? 'grid grid-flow-row grid-cols-2'

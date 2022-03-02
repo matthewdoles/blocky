@@ -10,7 +10,6 @@ const GameBoard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(activeGamePiece);
     const anchorSquare = gameBoard.findIndex((square) => {
       return (
         square.x - 20 < activeGamePiece.x &&

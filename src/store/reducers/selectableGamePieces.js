@@ -3,9 +3,11 @@ import { checkGameOver } from 'functions';
 import { updateGameOver } from './game';
 
 export const SET_PIECES = 'SET_PIECES';
+export const SET_PIECE_NUMBER = 'SET_PIECE_NUMBER';
 
 const INITIAL_STATE = {
-  gamePieces: []
+  gamePieces: [],
+  pieceNumber: 1
 };
 
 export default function selectableGamePieces(state = INITIAL_STATE, action) {
@@ -16,6 +18,12 @@ export default function selectableGamePieces(state = INITIAL_STATE, action) {
         gamePieces: action.gamePieces
       };
     }
+    case SET_PIECE_NUMBER: {
+      return {
+        ...state,
+        pieceNumber: action.pieceNumber
+      };
+    }
     default:
       return { ...state };
   }
@@ -23,20 +31,24 @@ export default function selectableGamePieces(state = INITIAL_STATE, action) {
 
 export function getRandomPieces() {
   return async (dispatch, getState) => {
-    const { game } = getState();
+    const { game, selectableGamePieces } = getState();
     let i = 0;
     let randomPieces = [];
     while (i < 3) {
       randomPieces.push({
         ...gamePieces[Math.floor(Math.random() * gamePieces.length)],
         isValid: false,
-        id: i
+        id: selectableGamePieces.pieceNumber + i
       });
       i++;
     }
     dispatch({
       type: SET_PIECES,
       gamePieces: randomPieces
+    });
+    dispatch({
+      type: SET_PIECE_NUMBER,
+      pieceNumber: selectableGamePieces.pieceNumber + 4
     });
     if (!checkGameOver(game.gameBoard, randomPieces)) {
       dispatch(updateGameOver(true));

@@ -35,7 +35,7 @@ function App() {
               style={{
                 boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)'
               }}
-              key={i}>
+              key={piece.id}>
               <div className="flex mx-auto items-center">
                 {!piece.isValid && <GamePiece pieceData={piece} xOffset={220 * i} />}
               </div>
