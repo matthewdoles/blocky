@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -7,6 +7,7 @@ import { updateActivePiece } from 'store/reducers/activeGamePiece';
 const GamePiece = ({ pieceData, xOffset }) => {
   const [gamePiece] = useState(pieceData);
   const [isBeingDragged, setIsBeingDragged] = useState(false);
+  const nodeRef = useRef(null);
   const dispatch = useDispatch();
 
   const handleStart = () => {
@@ -38,8 +39,13 @@ const GamePiece = ({ pieceData, xOffset }) => {
   };
 
   return (
-    <Draggable onStart={handleStart} onStop={handleStop} position={{ x: 0, y: 0 }}>
+    <Draggable
+      onStart={handleStart}
+      onStop={handleStop}
+      position={{ x: 0, y: 0 }}
+      nodeRef={nodeRef}>
       <div
+        ref={nodeRef}
         className={
           gamePiece.cols === 3
             ? 'grid grid-flow-row grid-cols-3'
