@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateGamePieceValid } from 'store/reducers/selectableGamePieces';
-import { updateGameOver, updateGame } from 'store/reducers/game';
-import { checkBoardState, checkGameOver } from 'functions';
+import { updateGame } from 'store/reducers/game';
+import { checkBoardState } from 'functions';
 
 const GameBoard = () => {
   const { gameBoard } = useSelector((state) => state.game);
   const activeGamePiece = useSelector((state) => state.activeGamePiece);
-  const { gamePieces } = useSelector((state) => state.selectableGamePieces);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,9 +46,6 @@ const GameBoard = () => {
         const gameState = checkBoardState(updatedArray, addScore);
         dispatch(updateGame(gameState.gameBoard, gameState.addScore));
         dispatch(updateGamePieceValid(activeGamePiece.gamePiece.id, isValid));
-        if (!checkGameOver(gameState.gameBoard, gamePieces)) {
-          dispatch(updateGameOver(true));
-        }
       }
     }
   }, [activeGamePiece.x, activeGamePiece.y]);

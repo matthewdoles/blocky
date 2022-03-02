@@ -34,31 +34,27 @@ export const checkGameOver = (gameBoard, gamePieces) => {
   let placementExists = false;
   let allPiecesChecked = false;
 
-  const invalidPieces = [];
-  gamePieces.forEach((piece) => {
-    if (!piece.isValid) invalidPieces.push(piece);
-  });
-  if (invalidPieces.length === 0) return true;
-
   while (!placementExists && !allPiecesChecked) {
-    invalidPieces.forEach((piece) => {
-      gameBoard.forEach((square, i) => {
-        let isValid = true;
-        piece.structure.forEach((piece) => {
-          if (piece.isFilled) {
-            if (piece.col > 0 && (piece.col + i) % 10 === 0) {
-              isValid = false;
+    gamePieces.forEach((piece) => {
+      if (!piece.isValid) {
+        gameBoard.forEach((square, i) => {
+          let isValid = true;
+          piece.structure.forEach((piece) => {
+            if (piece.isFilled) {
+              if (piece.col > 0 && (piece.col + i) % 10 === 0) {
+                isValid = false;
+              }
+              const index = i - 10 * piece.row + piece.col;
+              if (index > 99 || index < 0) {
+                isValid = false;
+              } else if (gameBoard[index].isFilled) {
+                isValid = false;
+              }
             }
-            const index = i - 10 * piece.row + piece.col;
-            if (index > 99 || index < 0) {
-              isValid = false;
-            } else if (gameBoard[index].isFilled) {
-              isValid = false;
-            }
-          }
+          });
+          if (isValid) placementExists = true;
         });
-        if (isValid) placementExists = true;
-      });
+      }
     });
     allPiecesChecked = true;
   }

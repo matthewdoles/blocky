@@ -16,7 +16,7 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-zinc-800 min-h-screen">
+    <div className="bg-zinc-800 max-h-screen min-h-screen min-w-screen max-w-screen">
       <div className="relative pt-8 mx-auto" style={{ width: '40rem' }}>
         <GameBoard />
         <div className="absolute top-0 mt-6" style={{ right: '-175px' }}>

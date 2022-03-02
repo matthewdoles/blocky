@@ -46,7 +46,7 @@ export function getRandomPieces() {
 
 export function updateGamePieceValid(id, isValid) {
   return async (dispatch, getState) => {
-    const { selectableGamePieces } = getState();
+    const { game, selectableGamePieces } = getState();
     const updatedPieces = [...selectableGamePieces.gamePieces];
     const gamePieceIndex = updatedPieces.findIndex((piece) => piece.id === id);
     if (gamePieceIndex !== -1) {
@@ -59,6 +59,8 @@ export function updateGamePieceValid(id, isValid) {
 
     if (updatedPieces.every((piece) => piece.isValid)) {
       dispatch(getRandomPieces());
+    } else if (!checkGameOver(game.gameBoard, updatedPieces)) {
+      dispatch(updateGameOver(true));
     }
   };
 }
