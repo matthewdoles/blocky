@@ -1,53 +1,37 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateGamePieceValid } from 'store/reducers/selectableGamePieces';
-import { updateGame } from 'store/reducers/game';
-import { checkBoardState } from 'functions';
+import PropTypes from 'prop-types';
 
-const GameBoard = () => {
-  const { gameBoard } = useSelector((state) => state.game);
-  const activeGamePiece = useSelector((state) => state.activeGamePiece);
-  const dispatch = useDispatch();
+import { checkBoardState, checkPlacementValidity } from 'functions';
 
+const GameBoard = ({ activeGamePiece, gameBoard, updateGame, updateGamePieceValid }) => {
   useEffect(() => {
-    const anchorSquare = gameBoard.findIndex((square) => {
-      return (
-        square.x - 20 < activeGamePiece.x &&
-        activeGamePiece.x + 20 < square.x + 64 &&
-        square.y - 20 < activeGamePiece.y &&
-        activeGamePiece.y + 20 < square.y + 64
-      );
-    });
-    if (anchorSquare !== -1) {
-      const updatedArray = [...gameBoard];
-      let isValid = true;
-      activeGamePiece.gamePiece.structure.forEach((piece) => {
-        if (piece.isFilled) {
-          if (piece.col > 0 && (piece.col + anchorSquare) % 10 === 0) {
-            isValid = false;
-          }
-          const index = anchorSquare - 10 * piece.row + piece.col;
-          if (index > 99 || index < 0) {
-            isValid = false;
-          } else if (updatedArray[index].isFilled) {
-            isValid = false;
-          }
-        }
+    if (activeGamePiece) {
+      const anchorSquare = gameBoard.findIndex((square) => {
+        return (
+          square.x - 20 < activeGamePiece.x &&
+          activeGamePiece.x + 20 < square.x + 64 &&
+          square.y - 20 < activeGamePiece.y &&
+          activeGamePiece.y + 20 < square.y + 64
+        );
       });
-      if (isValid) {
-        let addScore = 0;
-        activeGamePiece.gamePiece.structure.forEach((piece) => {
-          if (piece.isFilled) {
-            updatedArray[anchorSquare - 10 * piece.row + piece.col].isFilled = true;
-            addScore += 1;
-          }
-        });
-        const gameState = checkBoardState(updatedArray, addScore);
-        dispatch(updateGame(gameState.gameBoard, gameState.addScore));
-        dispatch(updateGamePieceValid(activeGamePiece.gamePiece.id, isValid));
+      if (anchorSquare !== -1) {
+        const updatedArray = [...gameBoard];
+
+        if (checkPlacementValidity(anchorSquare, gameBoard, activeGamePiece.gamePiece)) {
+          let addScore = 0;
+          activeGamePiece.gamePiece.structure.forEach((piece) => {
+            if (piece.isFilled) {
+              updatedArray[anchorSquare - 10 * piece.row + piece.col].isFilled = true;
+              addScore += 1;
+            }
+          });
+          const gameState = checkBoardState(updatedArray, addScore);
+          updateGame(gameState.gameBoard, gameState.addScore);
+          updateGamePieceValid(activeGamePiece.gamePiece.id);
+        }
       }
     }
-  }, [activeGamePiece.x, activeGamePiece.y]);
+  }, [activeGamePiece]);
 
   return (
     <div className="grid grid-cols-10">
@@ -66,3 +50,10 @@ const GameBoard = () => {
 };
 
 export default GameBoard;
+
+GameBoard.propTypes = {
+  activeGamePiece: PropTypes.object,
+  gameBoard: PropTypes.array,
+  updateGame: PropTypes.func,
+  updateGamePieceValid: PropTypes.func
+};

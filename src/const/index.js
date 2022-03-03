@@ -101,7 +101,7 @@ export const gameBoard = [
   { y: 0, x: 576, isFilled: false }
 ];
 
-export const gamePieces = [
+export const piecesCatalog = [
   {
     name: 'rowSmall',
     cols: 2,
