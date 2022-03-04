@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
-import GameBoard from 'components/GameBoard';
-import GamePiece from 'components/GamePiece';
-import { piecesCatalog, gameBoard } from 'const';
-import { checkGameOver } from 'functions';
+import GameBoard from './components/GameBoard';
+import GamePiece from './components/GamePiece';
+import { piecesCatalog, gameBoard } from './const';
+import { checkGameOver } from './functions';
+import { IActiveGamePiece } from './models/ActiveGamePiece.model';
+import { ISelectableGamePiece } from './models/GamePiece.model';
+import { IGameState } from './models/GameState.model';
+import { IGameBoardPiece } from './models/GameBoardPiece.model';
 import './App.css';
 
 function App() {
-  const [activePiece, setActivePiece] = useState(null);
-  const [gamePieces, setGamePieces] = useState([]);
-  const [piecesUsed, setPiecesUsed] = useState(0);
-  const [gameState, setGameState] = useState({
+  const [activePiece, setActivePiece] = useState<IActiveGamePiece>({
+    x: -200,
+    y: -200,
+    gamePiece: {
+      ...piecesCatalog[Math.floor(Math.random() * piecesCatalog.length)],
+      id: 0,
+      isValid: false
+    }
+  });
+  const [gamePieces, setGamePieces] = useState<ISelectableGamePiece[]>([]);
+  const [piecesUsed, setPiecesUsed] = useState<number>(0);
+  const [gameState, setGameState] = useState<IGameState>({
     addedPoints: 0,
     gameBoard: gameBoard,
     isOver: false,
@@ -38,7 +50,7 @@ function App() {
     checkIfGameOver(randomPieces);
   };
 
-  const updateGamePieceValid = (id) => {
+  const updateGamePieceValid = (id: number) => {
     const updatedPieces = [...gamePieces];
     const gamePieceIndex = updatedPieces.findIndex((piece) => piece.id === id);
     if (gamePieceIndex !== -1) {
@@ -53,8 +65,8 @@ function App() {
     }
   };
 
-  const updateGameState = (gameBoard, score) =>
-    setGameState((currState) => {
+  const updateGameState = (gameBoard: IGameBoardPiece[], score: number) =>
+    setGameState((currState: IGameState) => {
       return {
         ...currState,
         addedPoints: score,
@@ -63,7 +75,7 @@ function App() {
       };
     });
 
-  const checkIfGameOver = (pieces) => {
+  const checkIfGameOver = (pieces: ISelectableGamePiece[]) => {
     if (!checkGameOver(gameState.gameBoard, pieces)) {
       setGameState((currState) => {
         return {

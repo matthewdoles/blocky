@@ -1,4 +1,7 @@
-export const checkBoardState = (updatedGameBoard, addScore) => {
+import { IGameBoardPiece } from '../models/GameBoardPiece.model';
+import { ISelectableGamePiece } from '../models/GamePiece.model';
+
+export const checkBoardState = (updatedGameBoard: IGameBoardPiece[], addScore: number) => {
   let i = 0;
   const validRows = [];
   const validColumns = [];
@@ -30,23 +33,27 @@ export const checkBoardState = (updatedGameBoard, addScore) => {
   return { gameBoard: updatedGameBoard, addScore };
 };
 
-export const checkGameOver = (gameBoard, gamePieces) => {
+export const checkGameOver = (gameBoard: IGameBoardPiece[], gamePieces: ISelectableGamePiece[]) => {
   let placementExists = false;
   let allPiecesChecked = false;
   while (!placementExists && !allPiecesChecked) {
-    gamePieces.forEach((piece) => {
-      if (!piece.isValid) {
-        gameBoard.forEach((square, i) => {
-          if (checkPlacementValidity(i, gameBoard, piece)) placementExists = true;
-        });
+    for (let i = 0; i < gamePieces.length; i++) {
+      if (!gamePieces[i].isValid) {
+        for (let j = 0; j < gameBoard.length; j++) {
+          if (checkPlacementValidity(j, gameBoard, gamePieces[i])) placementExists = true;
+        }
       }
-    });
+    }
     allPiecesChecked = true;
   }
   return placementExists;
 };
 
-export const checkPlacementValidity = (anchorSquare, gameBoard, gamePiece) => {
+export const checkPlacementValidity = (
+  anchorSquare: number,
+  gameBoard: IGameBoardPiece[],
+  gamePiece: ISelectableGamePiece
+) => {
   let isValid = true;
   gamePiece.structure.forEach((piece) => {
     if (piece.isFilled) {

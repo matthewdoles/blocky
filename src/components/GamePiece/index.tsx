@@ -1,12 +1,20 @@
 import React, { useRef, useState } from 'react';
-import Draggable from 'react-draggable';
-import PropTypes from 'prop-types';
+import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 
-const GamePiece = ({ gamePiece, setActivePiece, xOffset }) => {
+import { IActiveGamePiece } from '../../models/ActiveGamePiece.model';
+import { ISelectableGamePiece } from '../../models/GamePiece.model';
+
+type Props = {
+  gamePiece: ISelectableGamePiece;
+  setActivePiece: (gamePiece: IActiveGamePiece) => void;
+  xOffset: number;
+};
+
+const GamePiece = ({ gamePiece, setActivePiece, xOffset }: Props) => {
   const [isBeingDragged, setIsBeingDragged] = useState(false);
-  const nodeRef = useRef(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
-  const handleStop = (e, position) => {
+  const handleStop = (e: DraggableEvent, position: DraggableData) => {
     const { x, y } = position;
     let calcX = x + xOffset + (gamePiece.cols === 1 ? 64 : gamePiece.cols === 2 ? 32 : 0);
     let belowYAxis =
@@ -62,9 +70,3 @@ const GamePiece = ({ gamePiece, setActivePiece, xOffset }) => {
 };
 
 export default GamePiece;
-
-GamePiece.propTypes = {
-  gamePiece: PropTypes.object,
-  setActivePiece: PropTypes.func,
-  xOffset: PropTypes.number
-};

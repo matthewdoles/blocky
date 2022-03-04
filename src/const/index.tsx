@@ -1,4 +1,7 @@
-export const gameBoard = [
+import { IGameBoardPiece } from '../models/GameBoardPiece.model';
+import { IGamePiece } from '../models/GamePiece.model';
+
+export const gameBoard: IGameBoardPiece[] = [
   { y: 576, x: 0, isFilled: false },
   { y: 576, x: 64, isFilled: false },
   { y: 576, x: 128, isFilled: false },
@@ -101,7 +104,7 @@ export const gameBoard = [
   { y: 0, x: 576, isFilled: false }
 ];
 
-export const piecesCatalog = [
+export const piecesCatalog: IGamePiece[] = [
   {
     name: 'rowSmall',
     cols: 2,
