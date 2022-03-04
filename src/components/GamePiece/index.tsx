@@ -14,7 +14,7 @@ const GamePiece = ({ gamePiece, setActivePiece, xOffset }: Props) => {
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const nodeRef = useRef<HTMLDivElement>(null);
 
-  const handleStop = (e: DraggableEvent, position: DraggableData) => {
+  const handleStop = (_e: DraggableEvent, position: DraggableData) => {
     const { x, y } = position;
     let calcX = x + xOffset + (gamePiece.cols === 1 ? 64 : gamePiece.cols === 2 ? 32 : 0);
     let belowYAxis =
@@ -57,7 +57,7 @@ const GamePiece = ({ gamePiece, setActivePiece, xOffset }: Props) => {
             key={i}
             className={
               piece.isFilled
-                ? `${isBeingDragged ? 'w-16 h-16' : 'w-12 h-12'} rounded bg-emerald-300`
+                ? `${isBeingDragged ? 'w-16 h-16' : 'w-12 h-12'} rounded bg-secondary`
                 : `${isBeingDragged ? 'w-16 h-16' : 'w-12 h-12'} border-transparent bg-transparent`
             }
             style={

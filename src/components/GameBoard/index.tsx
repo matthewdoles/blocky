@@ -46,8 +46,8 @@ const GameBoard = ({ activeGamePiece, gameBoard, updateGame, updateGamePieceVali
           key={i}
           className={
             val.isFilled
-              ? 'w-16 h-16 border-zinc-900 rounded bg-emerald-300'
-              : 'w-16 h-16 border-zinc-900 rounded bg-blue-400/75'
+              ? 'w-16 h-16 border-zinc-900 rounded bg-secondary'
+              : 'w-16 h-16 border-zinc-900 rounded bg-primary'
           }
           style={{ borderWidth: '1px', boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)' }}></div>
       ))}

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 
 import GameBoard from './components/GameBoard';
 import GamePiece from './components/GamePiece';
 import { piecesCatalog, gameBoard } from './const';
+import { themes } from './const/themes';
 import { checkGameOver } from './functions';
 import { IActiveGamePiece } from './models/ActiveGamePiece.model';
 import { ISelectableGamePiece } from './models/GamePiece.model';
@@ -11,6 +12,7 @@ import { IGameBoardPiece } from './models/GameBoardPiece.model';
 import './App.css';
 
 function App() {
+  const [dataTheme, setDataTheme] = useState<string>('blueGreen');
   const [activePiece, setActivePiece] = useState<IActiveGamePiece>({
     x: -200,
     y: -200,
@@ -87,7 +89,9 @@ function App() {
   };
 
   return (
-    <div className="bg-zinc-800 max-h-screen min-h-screen max-w-screen min-w-screen">
+    <div
+      className="bg-zinc-800 max-h-screen min-h-screen max-w-screen min-w-screen"
+      data-theme={dataTheme}>
       <div className="relative pt-8 mx-auto" style={{ maxWidth: '40rem', minWidth: '40rem' }}>
         <GameBoard
           activeGamePiece={activePiece}
@@ -95,19 +99,36 @@ function App() {
           updateGame={updateGameState}
           updateGamePieceValid={updateGamePieceValid}
         />
-        <div className="absolute top-0 mt-6" style={{ right: '-175px' }}>
-          <div className="w-40">
+        <div className="absolute top-0 mt-7" style={{ right: '-200px' }}>
+          <div className="w-44">
             <div className="text-white text-center font-bold uppercase">Score</div>
             <div className="text-white text-center stat-value">{gameState.score}</div>
             {gameState.isOver && (
               <div className="text-red-500 text-center font-bold uppercase">Game Over</div>
             )}
+            <div className="mt-6 form-control w-full">
+              <label className="label justify-center">
+                <span className="font-bold">Accent</span>
+              </label>
+              <select
+                className=" w-full select select-secondary border-4 font-bold"
+                defaultValue={dataTheme}
+                onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) =>
+                  setDataTheme(e.currentTarget.value)
+                }>
+                {themes.map((theme) => (
+                  <option key={theme.name} value={theme.name}>
+                    {theme.accent}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         <div className="w-full mt-6 h-40 grid gap-6 grid-cols-3">
           {gamePieces.map((piece, i) => (
             <div
-              className="w-48 h-48 flex mx-auto bg-blue-400/75 rounded-lg"
+              className="w-48 h-48 flex mx-auto bg-primary rounded-lg"
               style={{
                 boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)'
               }}
