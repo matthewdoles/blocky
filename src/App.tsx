@@ -1,18 +1,25 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 import GameBoard from './components/GameBoard';
 import GamePiece from './components/GamePiece';
-import { piecesCatalog, gameBoard } from './const';
+import { piecesCatalog, gameBoard, initLobbyState } from './const';
 import { themes } from './const/themes';
 import { checkGameOver } from './functions';
 import { IActiveGamePiece } from './models/ActiveGamePiece.model';
 import { ISelectableGamePiece } from './models/GamePiece.model';
 import { IGameState } from './models/GameState.model';
 import { IGameBoardPiece } from './models/GameBoardPiece.model';
+import { ILobby } from './models/Lobby.model';
+import { IClientToServerEvents, IServerToClientEvents } from './models/ClientToServerEvent.model';
 import './App.css';
+import MiniGameBoard from './components/MiniGameBoard';
 
 function App() {
   const [dataTheme, setDataTheme] = useState<string>('blueGreen');
+  const [socket, setSocket] = useState<Socket<IServerToClientEvents, IClientToServerEvents>>();
+  const [lobby, setLobby] = useState<ILobby>(initLobbyState);
+  const [error, setError] = useState<string>('');
   const [activePiece, setActivePiece] = useState<IActiveGamePiece>({
     x: -200,
     y: -200,
@@ -33,7 +40,37 @@ function App() {
 
   useEffect(() => {
     getRandomPieces();
+    const newSocket = io(`http://localhost:8080`);
+    setSocket(newSocket);
+    console.log(error);
   }, []);
+
+  const joinLobby = () => {
+    const newGameState = { addedPoints: 0, gameBoard: gameBoard, isOver: false, score: 0 };
+    socket?.emit(
+      'joinLobby',
+      {
+        id: socket.id,
+        gameState: newGameState,
+        username: 'Matthew',
+        profileImage: 'asdfsd'
+      },
+      (error) => {
+        if (error) {
+          return setError(error);
+        }
+        setGameState(newGameState);
+      }
+    );
+  };
+  socket?.on('userLeft', () => {
+    setLobby(initLobbyState);
+  });
+
+  socket?.on('updateLobby', (lobby: ILobby) => {
+    setLobby(lobby);
+    console.log(lobby);
+  });
 
   const getRandomPieces = () => {
     let i = 0;
@@ -67,7 +104,7 @@ function App() {
     }
   };
 
-  const updateGameState = (gameBoard: IGameBoardPiece[], score: number) =>
+  const updateGameState = (gameBoard: IGameBoardPiece[], score: number) => {
     setGameState((currState: IGameState) => {
       return {
         ...currState,
@@ -76,6 +113,22 @@ function App() {
         score: currState.score + score
       };
     });
+    if (socket) {
+      socket?.emit(
+        'updateUserGameState',
+        {
+          lobbyId: lobby.lobbyId,
+          gameBoard,
+          addedPoints: score
+        },
+        (error) => {
+          if (error) {
+            return setError(error);
+          }
+        }
+      );
+    }
+  };
 
   const checkIfGameOver = (pieces: ISelectableGamePiece[]) => {
     if (!checkGameOver(gameState.gameBoard, pieces)) {
@@ -99,6 +152,13 @@ function App() {
           updateGame={updateGameState}
           updateGamePieceValid={updateGamePieceValid}
         />
+        {lobby.users.length > 1 && (
+          <div className="absolute top-0 mt-7" style={{ left: '-220px' }}>
+            <div className="w-50">
+              <MiniGameBoard user={lobby.users.filter((u) => u.id !== socket?.id)[0]} />
+            </div>
+          </div>
+        )}
         <div className="absolute top-0 mt-7" style={{ right: '-200px' }}>
           <div className="w-44">
             <div className="text-white text-center font-bold uppercase">Score</div>
@@ -113,9 +173,10 @@ function App() {
               <select
                 className=" w-full select select-secondary border-4 font-bold"
                 defaultValue={dataTheme}
-                onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) =>
-                  setDataTheme(e.currentTarget.value)
-                }>
+                onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) => {
+                  setDataTheme(e.currentTarget.value);
+                  joinLobby();
+                }}>
                 {themes.map((theme) => (
                   <option key={theme.name} value={theme.name}>
                     {theme.accent}

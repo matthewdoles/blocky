@@ -104,6 +104,17 @@ export const gameBoard: IGameBoardPiece[] = [
   { y: 0, x: 576, isFilled: false }
 ];
 
+export const initLobbyState = {
+  lobbyId: '123456',
+  users: [
+    {
+      id: 'invalid',
+      username: 'Guest',
+      gameState: { addedPoints: 0, isOver: false, gameBoard: gameBoard, score: 0 }
+    }
+  ]
+};
+
 export const piecesCatalog: IGamePiece[] = [
   {
     name: 'rowSmall',
