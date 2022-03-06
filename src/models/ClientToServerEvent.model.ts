@@ -9,6 +9,13 @@ export interface IServerToClientEvents {
 
 export interface IClientToServerEvents {
   joinLobby: (user: IUser, callback: (error: string) => void) => void;
+  updateGameOver: (
+    data: {
+      lobbyId: string;
+      isOver: boolean;
+    },
+    callback: (error: string) => void
+  ) => void;
   updateUserGameState: (
     data: {
       lobbyId: string;

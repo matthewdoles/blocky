@@ -1,13 +1,14 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { BounceLoader } from 'react-spinners';
 
+import ColorPicker from './components/ColorPicker';
 import GameBoard from './components/GameBoard';
 import GamePiece from './components/GamePiece';
 import MiniGameBoard from './components/MiniGameBoard';
 import MultiplayerForm from './components/MultiplayerForm';
 import Scoreboard from './components/Scoreboard/indes';
 import { piecesCatalog, gameBoard, initLobbyState, INVALID } from './const';
-import { themes } from './const/themes';
 import { checkGameOver } from './functions';
 import { IActiveGamePiece } from './models/ActiveGamePiece.model';
 import { ISelectableGamePiece } from './models/GamePiece.model';
@@ -22,6 +23,7 @@ function App() {
   const [socket, setSocket] = useState<Socket<IServerToClientEvents, IClientToServerEvents>>();
   const [lobby, setLobby] = useState<ILobby>(initLobbyState);
   const [error, setError] = useState<string>('');
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activePiece, setActivePiece] = useState<IActiveGamePiece>({
     x: -200,
     y: -200,
@@ -42,21 +44,22 @@ function App() {
 
   useEffect(() => {
     getRandomPieces();
-    const newSocket = io(`http://localhost:8080`);
-    setSocket(newSocket);
   }, []);
 
   const joinLobby = (username: string, profileImage: string) => {
+    const newSocket = io(`http://localhost:8080`);
+    setSocket(newSocket);
+
     const newGameState = { addedPoints: 0, gameBoard: gameBoard, isOver: false, score: 0 };
-    socket?.emit(
+    newSocket.emit(
       'joinLobby',
       {
-        id: socket.id,
+        id: newSocket.id,
         gameState: newGameState,
         username,
         profileImage
       },
-      (error) => {
+      (error: string) => {
         if (error) {
           return setError(error);
         }
@@ -64,13 +67,17 @@ function App() {
       }
     );
   };
+
   socket?.on('userLeft', () => {
     setLobby(initLobbyState);
   });
 
   socket?.on('updateLobby', (lobby: ILobby) => {
     setLobby(lobby);
-    console.log(lobby);
+    if (lobby.users.length === 1) {
+      return setIsSearching(true);
+    }
+    setIsSearching(false);
   });
 
   const getRandomPieces = () => {
@@ -139,6 +146,13 @@ function App() {
           isOver: true
         };
       });
+      if (socket) {
+        socket?.emit('updateGameOver', { lobbyId: lobby.lobbyId, isOver: true }, (error) => {
+          if (error) {
+            return setError(error);
+          }
+        });
+      }
     }
   };
 
@@ -154,9 +168,18 @@ function App() {
             updateGame={updateGameState}
             updateGamePieceValid={updateGamePieceValid}
           />
-          {lobby.users.length > 1 && (
-            <div className="absolute top-0 mt-7" style={{ left: '-220px' }}>
+          <div className="absolute top-0 mt-7" style={{ left: '-220px' }}>
+            {isSearching && (
+              <div className="flex flex-col items-center">
+                <p className="text-white font-bold text-lg mb-2">Searching for player...</p>
+                <BounceLoader color="rgb(96 165 250)" loading={isSearching} />
+              </div>
+            )}
+            {lobby.users.length > 1 && (
               <div className="w-50">
+                <div className="my-2">
+                  <MiniGameBoard user={lobby.users.filter((u) => u.id !== socket?.id)[0]} />
+                </div>
                 <Scoreboard
                   gameState={
                     lobby.users.filter((u) => u.id !== socket?.id).map((gs) => gs.gameState)[0]
@@ -166,12 +189,9 @@ function App() {
                     lobby.users.filter((u) => u.id !== socket?.id).map((u) => u.username)[0]
                   }
                 />
-                <div className="mt-6">
-                  <MiniGameBoard user={lobby.users.filter((u) => u.id !== socket?.id)[0]} />
-                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           <div className="absolute top-0 mt-7" style={{ right: '-200px' }}>
             <div className="w-44">
               <Scoreboard
@@ -179,23 +199,7 @@ function App() {
                 isMultiplayer={lobby.users.length > 1}
                 username={lobby.users.filter((u) => u.id === socket?.id).map((u) => u.username)[0]}
               />
-              <div className="mt-6 form-control w-full">
-                <label className="label justify-center">
-                  <span className="font-bold">Accent</span>
-                </label>
-                <select
-                  className=" w-full select select-secondary border-4 font-bold"
-                  defaultValue={dataTheme}
-                  onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) =>
-                    setDataTheme(e.currentTarget.value)
-                  }>
-                  {themes.map((theme) => (
-                    <option key={theme.name} value={theme.name}>
-                      {theme.accent}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <ColorPicker dataTheme={dataTheme} setDataTheme={(theme) => setDataTheme(theme)} />
               {lobby.users.length !== 2 && (
                 <label
                   htmlFor="multiplayer-modal"

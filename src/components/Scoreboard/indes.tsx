@@ -16,7 +16,7 @@ const Scoreboard = ({ gameState, isMultiplayer, username }: Props) => {
       </div>
       <div className="text-white text-center stat-value">{gameState.score}</div>
       {gameState.isOver && (
-        <div className="text-red-500 text-center font-bold uppercase">Game Over</div>
+        <div className="text-red-500 text-center font-bold uppercase mt-1">Game Over</div>
       )}
     </>
   );
