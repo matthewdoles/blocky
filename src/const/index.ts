@@ -104,11 +104,13 @@ export const gameBoard: IGameBoardPiece[] = [
   { y: 0, x: 576, isFilled: false }
 ];
 
+export const INVALID = 'invalid';
+
 export const initLobbyState = {
-  lobbyId: '123456',
+  lobbyId: INVALID,
   users: [
     {
-      id: 'invalid',
+      id: INVALID,
       username: 'Guest',
       gameState: { addedPoints: 0, isOver: false, gameBoard: gameBoard, score: 0 }
     }

@@ -17,7 +17,10 @@ const MiniGameBoard = ({ user }: Props) => {
               ? 'w-5 h-5 border-zinc-900 rounded-xs bg-secondary'
               : 'w-5 h-5 border-zinc-900 rounded-xs bg-primary'
           }
-          style={{ borderWidth: '1px', boxShadow: 'inset 0 1px 3px 1px rgb(0 0 0 / 0.40)' }}></div>
+          style={{
+            borderWidth: '1px',
+            boxShadow: 'inset 0 1px 3px 1px rgb(0 0 0 / 0.40)'
+          }}></div>
       ))}
     </div>
   );

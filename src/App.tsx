@@ -3,7 +3,10 @@ import { io, Socket } from 'socket.io-client';
 
 import GameBoard from './components/GameBoard';
 import GamePiece from './components/GamePiece';
-import { piecesCatalog, gameBoard, initLobbyState } from './const';
+import MiniGameBoard from './components/MiniGameBoard';
+import MultiplayerForm from './components/MultiplayerForm';
+import Scoreboard from './components/Scoreboard/indes';
+import { piecesCatalog, gameBoard, initLobbyState, INVALID } from './const';
 import { themes } from './const/themes';
 import { checkGameOver } from './functions';
 import { IActiveGamePiece } from './models/ActiveGamePiece.model';
@@ -13,7 +16,6 @@ import { IGameBoardPiece } from './models/GameBoardPiece.model';
 import { ILobby } from './models/Lobby.model';
 import { IClientToServerEvents, IServerToClientEvents } from './models/ClientToServerEvent.model';
 import './App.css';
-import MiniGameBoard from './components/MiniGameBoard';
 
 function App() {
   const [dataTheme, setDataTheme] = useState<string>('blueGreen');
@@ -42,18 +44,17 @@ function App() {
     getRandomPieces();
     const newSocket = io(`http://localhost:8080`);
     setSocket(newSocket);
-    console.log(error);
   }, []);
 
-  const joinLobby = () => {
+  const joinLobby = (username: string, profileImage: string) => {
     const newGameState = { addedPoints: 0, gameBoard: gameBoard, isOver: false, score: 0 };
     socket?.emit(
       'joinLobby',
       {
         id: socket.id,
         gameState: newGameState,
-        username: 'Matthew',
-        profileImage: 'asdfsd'
+        username,
+        profileImage
       },
       (error) => {
         if (error) {
@@ -142,72 +143,94 @@ function App() {
   };
 
   return (
-    <div
-      className="bg-zinc-800 max-h-screen min-h-screen max-w-screen min-w-screen"
-      data-theme={dataTheme}>
-      <div className="relative pt-8 mx-auto" style={{ maxWidth: '40rem', minWidth: '40rem' }}>
-        <GameBoard
-          activeGamePiece={activePiece}
-          gameBoard={gameState.gameBoard}
-          updateGame={updateGameState}
-          updateGamePieceValid={updateGamePieceValid}
-        />
-        {lobby.users.length > 1 && (
-          <div className="absolute top-0 mt-7" style={{ left: '-220px' }}>
-            <div className="w-50">
-              <MiniGameBoard user={lobby.users.filter((u) => u.id !== socket?.id)[0]} />
-            </div>
-          </div>
-        )}
-        <div className="absolute top-0 mt-7" style={{ right: '-200px' }}>
-          <div className="w-44">
-            <div className="text-white text-center font-bold uppercase">Score</div>
-            <div className="text-white text-center stat-value">{gameState.score}</div>
-            {gameState.isOver && (
-              <div className="text-red-500 text-center font-bold uppercase">Game Over</div>
-            )}
-            <div className="mt-6 form-control w-full">
-              <label className="label justify-center">
-                <span className="font-bold">Accent</span>
-              </label>
-              <select
-                className=" w-full select select-secondary border-4 font-bold"
-                defaultValue={dataTheme}
-                onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) => {
-                  setDataTheme(e.currentTarget.value);
-                  joinLobby();
-                }}>
-                {themes.map((theme) => (
-                  <option key={theme.name} value={theme.name}>
-                    {theme.accent}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-        <div className="w-full mt-6 h-40 grid gap-6 grid-cols-3">
-          {gamePieces.map((piece, i) => (
-            <div
-              className="w-48 h-48 flex mx-auto bg-primary rounded-lg"
-              style={{
-                boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)'
-              }}
-              key={piece.id}>
-              <div className="flex mx-auto items-center">
-                {!piece.isValid && (
-                  <GamePiece
-                    gamePiece={piece}
-                    setActivePiece={(piece) => setActivePiece(piece)}
-                    xOffset={220 * i}
-                  />
-                )}
+    <>
+      <div
+        className="bg-zinc-800 max-h-screen min-h-screen max-w-screen min-w-screen"
+        data-theme={dataTheme}>
+        <div className="relative pt-8 mx-auto" style={{ maxWidth: '40rem', minWidth: '40rem' }}>
+          <GameBoard
+            activeGamePiece={activePiece}
+            gameBoard={gameState.gameBoard}
+            updateGame={updateGameState}
+            updateGamePieceValid={updateGamePieceValid}
+          />
+          {lobby.users.length > 1 && (
+            <div className="absolute top-0 mt-7" style={{ left: '-220px' }}>
+              <div className="w-50">
+                <Scoreboard
+                  gameState={
+                    lobby.users.filter((u) => u.id !== socket?.id).map((gs) => gs.gameState)[0]
+                  }
+                  isMultiplayer={true}
+                  username={
+                    lobby.users.filter((u) => u.id !== socket?.id).map((u) => u.username)[0]
+                  }
+                />
+                <div className="mt-6">
+                  <MiniGameBoard user={lobby.users.filter((u) => u.id !== socket?.id)[0]} />
+                </div>
               </div>
             </div>
-          ))}
+          )}
+          <div className="absolute top-0 mt-7" style={{ right: '-200px' }}>
+            <div className="w-44">
+              <Scoreboard
+                gameState={gameState}
+                isMultiplayer={lobby.users.length > 1}
+                username={lobby.users.filter((u) => u.id === socket?.id).map((u) => u.username)[0]}
+              />
+              <div className="mt-6 form-control w-full">
+                <label className="label justify-center">
+                  <span className="font-bold">Accent</span>
+                </label>
+                <select
+                  className=" w-full select select-secondary border-4 font-bold"
+                  defaultValue={dataTheme}
+                  onChange={(e: SyntheticEvent<HTMLSelectElement, Event>) =>
+                    setDataTheme(e.currentTarget.value)
+                  }>
+                  {themes.map((theme) => (
+                    <option key={theme.name} value={theme.name}>
+                      {theme.accent}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {lobby.users.length !== 2 && (
+                <label
+                  htmlFor="multiplayer-modal"
+                  className="w-full mt-4 btn btn-secondary text-white font-bold">
+                  Multiplayer
+                </label>
+              )}
+            </div>
+          </div>
+          <div className="w-full mt-6 h-40 grid gap-6 grid-cols-3">
+            {gamePieces.map((piece, i) => (
+              <div
+                className="w-48 h-48 flex mx-auto bg-primary rounded-lg"
+                style={{
+                  boxShadow: 'inset 0 2px 6px 1px rgb(0 0 0 / 0.40)'
+                }}
+                key={piece.id}>
+                <div className="flex mx-auto items-center">
+                  {!piece.isValid && (
+                    <GamePiece
+                      gamePiece={piece}
+                      setActivePiece={(piece) => setActivePiece(piece)}
+                      xOffset={220 * i}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      {lobby.lobbyId === INVALID && (
+        <MultiplayerForm dataTheme={dataTheme} error={error} joinLobby={joinLobby} />
+      )}
+    </>
   );
 }
 
