@@ -1,7 +1,7 @@
 import { IGameBoardPiece } from '../models/GameBoardPiece.model';
 import { IGamePiece } from '../models/GamePiece.model';
 
-export const gameBoard: IGameBoardPiece[] = [
+export const blankGameBoard: IGameBoardPiece[] = [
   { y: 576, x: 0, isFilled: false },
   { y: 576, x: 64, isFilled: false },
   { y: 576, x: 128, isFilled: false },
@@ -112,7 +112,12 @@ export const initLobbyState = {
     {
       id: INVALID,
       username: 'Guest',
-      gameState: { addedPoints: 0, isOver: false, gameBoard: gameBoard, score: 0 }
+      gameState: {
+        addedPoints: 0,
+        isOver: false,
+        gameBoard: JSON.parse(JSON.stringify(blankGameBoard)),
+        score: 0
+      }
     }
   ]
 };
@@ -300,3 +305,13 @@ export const piecesCatalog: IGamePiece[] = [
     ]
   }
 ];
+
+export const initActivePiece = {
+  x: -200,
+  y: -200,
+  gamePiece: {
+    ...piecesCatalog[Math.floor(Math.random() * piecesCatalog.length)],
+    id: 0,
+    isValid: false
+  }
+};

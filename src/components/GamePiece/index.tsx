@@ -6,11 +6,12 @@ import { ISelectableGamePiece } from '../../models/GamePiece.model';
 
 type Props = {
   gamePiece: ISelectableGamePiece;
+  isSearching: boolean;
   setActivePiece: (gamePiece: IActiveGamePiece) => void;
   xOffset: number;
 };
 
-const GamePiece = ({ gamePiece, setActivePiece, xOffset }: Props) => {
+const GamePiece = ({ gamePiece, isSearching, setActivePiece, xOffset }: Props) => {
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +42,8 @@ const GamePiece = ({ gamePiece, setActivePiece, xOffset }: Props) => {
       nodeRef={nodeRef}
       onStart={() => setIsBeingDragged(true)}
       onStop={handleStop}
-      position={{ x: 0, y: 0 }}>
+      position={{ x: 0, y: 0 }}
+      disabled={isSearching}>
       <div
         ref={nodeRef}
         className={`grid grid-flow-row
