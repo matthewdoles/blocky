@@ -41,7 +41,7 @@ function App() {
   }, []);
 
   const joinLobby = (username: string, profileImage: string) => {
-    const newSocket = io(`http://localhost:8080`);
+    const newSocket = io(process.env.REACT_APP_SOCKET_URL as string);
     setSocket(newSocket);
     newSocket.emit(
       'joinLobby',
@@ -97,7 +97,7 @@ function App() {
     let randomPieces = [];
     while (i < 3) {
       randomPieces.push({
-        ...piecesCatalog[piecesCatalog.length - 1],
+        ...piecesCatalog[Math.floor(Math.random() * piecesCatalog.length)],
         id: piecesUsed + i,
         isValid: false
       });

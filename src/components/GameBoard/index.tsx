@@ -37,7 +37,7 @@ const GameBoard = ({ activeGamePiece, gameBoard, updateGame, updateGamePieceVali
         updateGamePieceValid(activeGamePiece.gamePiece.id);
       }
     }
-  }, [activeGamePiece, gameBoard, updateGame, updateGamePieceValid]);
+  }, [activeGamePiece]);
 
   return (
     <div className="grid grid-cols-10">
