@@ -37,24 +37,22 @@ function App() {
   });
 
   useEffect(() => {
-    getRandomPieces();
+    getRandomPieces(false);
   }, []);
 
   const joinLobby = (username: string, profileImage: string) => {
     const newSocket = io(`http://localhost:8080`);
     setSocket(newSocket);
-
-    const newGameState = {
-      addedPoints: 0,
-      gameBoard: JSON.parse(JSON.stringify(blankGameBoard)),
-      isOver: false,
-      score: 0
-    };
     newSocket.emit(
       'joinLobby',
       {
         id: newSocket.id,
-        gameState: newGameState,
+        gameState: {
+          addedPoints: 0,
+          gameBoard: JSON.parse(JSON.stringify(blankGameBoard)),
+          isOver: false,
+          score: 0
+        },
         username,
         profileImage
       },
@@ -65,14 +63,13 @@ function App() {
       }
     );
     if (error.length === 0) {
-      setGameState(newGameState);
-      setActivePiece(initActivePiece);
-      getRandomPieces();
+      resetGame();
     }
   };
 
   socket?.on('userLeft', () => {
     setLobby(initLobbyState);
+    resetGame();
   });
 
   socket?.on('updateLobby', (lobby: ILobby) => {
@@ -86,16 +83,21 @@ function App() {
       return setGameOver(true);
     }
     lobby.users.forEach((u) => {
-      setGameOver(u.id !== socket.id && u.gameState.isOver && u.gameState.score < gameState.score);
+      if (u.id !== socket.id) {
+        setGameOver(
+          (u.gameState.isOver && u.gameState.score < gameState.score) ||
+            (gameState.isOver && u.gameState.score > gameState.score)
+        );
+      }
     });
   });
 
-  const getRandomPieces = () => {
+  const getRandomPieces = (checkGameOver: boolean) => {
     let i = 0;
     let randomPieces = [];
     while (i < 3) {
       randomPieces.push({
-        ...piecesCatalog[Math.floor(Math.random() * piecesCatalog.length)],
+        ...piecesCatalog[piecesCatalog.length - 1],
         id: piecesUsed + i,
         isValid: false
       });
@@ -104,7 +106,9 @@ function App() {
 
     setPiecesUsed(piecesUsed + 4);
     setGamePieces(randomPieces);
-    checkIfGameOver(randomPieces);
+    if (checkGameOver) {
+      checkIfGameOver(randomPieces);
+    }
   };
 
   const updateGamePieceValid = (id: number) => {
@@ -116,7 +120,7 @@ function App() {
     setGamePieces(updatedPieces);
 
     if (updatedPieces.every((piece) => piece.isValid)) {
-      getRandomPieces();
+      getRandomPieces(true);
     } else {
       checkIfGameOver(updatedPieces);
     }
@@ -166,6 +170,19 @@ function App() {
     }
   };
 
+  const resetGame = () => {
+    setGameState({
+      addedPoints: 0,
+      gameBoard: JSON.parse(JSON.stringify(blankGameBoard)),
+      isOver: false,
+      score: 0
+    });
+    setActivePiece(initActivePiece);
+    setGameOver(false);
+    setPiecesUsed(0);
+    getRandomPieces(false);
+  };
+
   return (
     <div
       className="bg-zinc-800 max-h-screen min-h-screen max-w-screen min-w-screen"
@@ -194,6 +211,7 @@ function App() {
                   lobby.users.filter((u) => u.id !== socket?.id).map((gs) => gs.gameState)[0]
                 }
                 isMultiplayer={true}
+                showGameOver={true}
                 username={lobby.users.filter((u) => u.id !== socket?.id).map((u) => u.username)[0]}
               />
             </div>
@@ -204,14 +222,23 @@ function App() {
             <Scoreboard
               gameState={gameState}
               isMultiplayer={lobby.users.length > 1}
+              showGameOver={true}
               username={lobby.users.filter((u) => u.id === socket?.id).map((u) => u.username)[0]}
             />
             <ColorPicker dataTheme={dataTheme} setDataTheme={(theme) => setDataTheme(theme)} />
             {lobby.users.length !== 2 && !isSearching && (
               <label
                 htmlFor="multiplayer-modal"
-                className="w-full mt-4 btn btn-secondary text-white font-bold">
+                className="w-full mt-4 btn btn-secondary text-white font-bold"
+                onClick={() => setError('')}>
                 Multiplayer
+              </label>
+            )}
+            {gameState.isOver && lobby.lobbyId === INVALID && (
+              <label
+                className="w-full mt-4 btn bg-blue-400 border-transparent text-white font-bold"
+                onClick={resetGame}>
+                New Game
               </label>
             )}
           </div>
@@ -239,7 +266,17 @@ function App() {
         </div>
       </div>
       {lobby.lobbyId === INVALID && <MultiplayerForm error={error} joinLobby={joinLobby} />}
-      <MulitplayerGameOver gameOver={gameOver} lobby={lobby} />
+      <MulitplayerGameOver
+        disconnectSocket={() => {
+          socket?.disconnect();
+          setSocket(undefined);
+          setLobby(initLobbyState);
+          resetGame();
+        }}
+        gameOver={gameOver}
+        lobby={lobby}
+        socketId={socket?.id || ''}
+      />
     </div>
   );
 }
