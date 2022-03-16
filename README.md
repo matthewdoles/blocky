@@ -9,3 +9,13 @@ This website is a block based puzzle game akin to the popular mobile game [Woody
 - [https://blocky-beige.vercel.app/](https://blocky-beige.vercel.app/)
 
 The site is hosted on [Vercel](https://vercel.com/). Every commit or merge to main is setup to automatically re-deploy the main branch into production.
+
+### Design
+
+#### Game Pieces
+
+#### Game Board
+
+#### Multiplayer
+
+#### Accent Picker
