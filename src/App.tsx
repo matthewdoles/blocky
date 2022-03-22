@@ -5,6 +5,7 @@ import { BounceLoader } from 'react-spinners';
 import ColorPicker from './components/ColorPicker';
 import GameBoard from './components/GameBoard';
 import GamePiece from './components/GamePiece';
+import Modal from './components/Modal';
 import MiniGameBoard from './components/MiniGameBoard';
 import MultiplayerForm from './components/MultiplayerForm';
 import MulitplayerGameOver from './components/MultiplayerGameOver';
@@ -225,6 +226,12 @@ function App() {
               showGameOver={true}
               username={lobby.users.filter((u) => u.id === socket?.id).map((u) => u.username)[0]}
             />
+            <label
+              htmlFor="modal"
+              className="w-6 flex mx-auto justify-center mt-4 bg-white text-black font-bold rounded-full cursor-pointer"
+              onClick={() => setError('')}>
+              i
+            </label>
             <ColorPicker dataTheme={dataTheme} setDataTheme={(theme) => setDataTheme(theme)} />
             {lobby.users.length !== 2 && !isSearching && (
               <label
@@ -277,6 +284,19 @@ function App() {
         lobby={lobby}
         socketId={socket?.id || ''}
       />
+      <Modal>
+        <>
+          <p className="mb-2 text-2xl text-white font-bold uppercase">How To</p>
+          <p className="text-lg text-white">
+            The sole objective of this game is to get the highest score you can by placing the
+            randomly generated pieces on the board. Like Tetris, a full line (both horizontal and/or
+            vertical in this game) will clear those spots on the board. Additionally, clearing 2 or
+            more lines at one time nets more points as opposed to one (100 points times the number
+            of lines). However, be mindful as the game pieces are randomly generated 3 at a time.
+            When no remaining piece can be successfully placed on the game board - it's game over.
+          </p>
+        </>
+      </Modal>
     </div>
   );
 }
